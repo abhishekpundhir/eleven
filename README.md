@@ -36,6 +36,13 @@ The long-term vision is to transform Phoenix into a fully autonomous desktop ope
 
 
 ---
+
+
+> 📹 **Demo Video**
+
+*(Add your YouTube or Google Drive link here)*
+
+
 # Features
 
 ### Voice Interaction
@@ -110,6 +117,25 @@ The long-term vision is to transform Phoenix into a fully autonomous desktop ope
             Desktop UI
 ```
 
+---
+
+# Roadmap
+
+- [x] Desktop Interface
+- [x] Wake Word Detection
+- [x] AI Conversation
+- [x] Website Launcher
+- [x] Music Support
+- [x] News Briefing
+- [ ] Persistent Memory
+- [ ] Plugin System
+- [ ] Calendar Integration
+- [ ] Smart Automation
+- [ ] Offline AI Support
+- [ ] Mobile Companion
+
+---
+
 # Why Phoenix?
 
 Most desktop assistants stop at answering questions.
@@ -120,7 +146,7 @@ This repository represents Version 1 of that vision.
 
 ---
 
-# How to Download Phoenix  
+# Installation
 
 ```bash
 git clone https://github.com/yourusername/Phoenix.git
@@ -132,8 +158,9 @@ pip install -r requirements.txt
 python main2.py
 ```
 
+Or simply download the latest release from the Releases page.
 
-
+---
 
 # Author
 

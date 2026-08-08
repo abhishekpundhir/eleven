@@ -1,0 +1,8 @@
+User: tell me about lab
+Phoenix: Phoenix Lab is your centralized project ecosystem — a single hub for VibeSpace, Stoxie, Phoenix, IgoneStudio, ProjectAppy, and any other builds you spin up. It ties together projects, tools, experiments, repos, and live deployments in one interface.
+
+Want me to open it, or give you a rundown of what's inside?
+------------------------------------------------------------
+User: open project phone
+Phoenix: Boss I had a thought. Then it disappeared.
+------------------------------------------------------------
