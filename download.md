@@ -2,7 +2,7 @@
 
 ### Phoenix 2.0 — AI Desktop Assistant
 
-[**OPEN PHOENIX →**](./Phoenix)
+[**OPEN PHOENIX →**](dist/Phoenix)
 
 Download or access the complete Phoenix application.
 
