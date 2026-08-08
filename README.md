@@ -32,7 +32,8 @@ The long-term vision is to transform Phoenix into a fully autonomous desktop ope
 
 # Demo
 # PhoenixAI - Home UI
-<img width="1366" height="642" alt="image" src="https://github.com/user-attachments/assets/9c388ac8-560a-4d25-8831-902b000db769" />
+
+<img width="1717" height="916" alt="phoenix" src="https://github.com/user-attachments/assets/f2a631bf-3b67-42e0-a118-530c07b7a253" />
 
 
 ---
