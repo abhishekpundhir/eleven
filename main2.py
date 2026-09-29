@@ -82,14 +82,6 @@ assistant_thread = None
 
 
 # =====================================================
-# TTS CACHE
-# =====================================================
-
-TTS_CACHE = {}
-TTS_CACHE_LOCK = threading.Lock()
-
-
-# =====================================================
 # DIALOGUE
 # =====================================================
 
@@ -97,41 +89,41 @@ STARTUP_LINES = [
     "Phoenix online. Good to go boss",
     "Boss phoenix at your service",
     "Systems online. Let's get to work",
-    "I'm Up boss whats the task",
-    "Phoenix is online"
-    "Checking on you boss is all good"
+    "I'm up boss, what's the task",
+    "Phoenix is online",
+    "Checking on you boss, is all good"
 ]
 
 WAKE_LINES = [
-    "I'm here Boss",
+    "I'm here Boss.",
     "Welcome back Ashlye",
-    "At your service Boss",
-    "Hey there any tea",
-    "Hey Boss is that a 3AM Overthink. or a new project idea",
-    "I'm missed  you boss ",
-    "Congratulations for your last progress boss. that was a smooth win ",
-    "Hey welcome back boss. i'm just thinking about you"
+    "At your service Boss.",
+    "Hey there, any tea.",
+    "Hey Boss, is that a 3AM overthink, or a new project idea.",
+    "I missed you boss.",
+    "Congratulations for your last progress boss. That was a smooth win.",
+    "Hey welcome back boss. I'm just thinking about you."
 ]
 
 THINKING_LINES = [
-    "Give me a second  ",
-    "Working on it boss",
-    "One moment baby",
-    "Let me handle that",
-    "Hold your coffee boss. i'll handle this",
-    "On it"
+    "Give me a second.",
+    "Working on it boss.",
+    "Let me think bro.",
+    "Let me handle that.",
+    "Hold your coffee boss. I'll handle this.",
+    "On it."
 ]
 
 GOODBYE_LINES = [
-    "Good night boss.  i'm here whenver you need me",
-    "get some sleep boss i'll handle the rest work",
-    "dude gotta go and you don't overthink. i'll be here by your side allways",
+    "Good night boss. I'm here whenever you need me.",
+    "Get some sleep boss. I'll handle the rest of the work.",
+    "Dude, gotta go. And you don't overthink. I'll be here by your side always.",
     "I'll be here when you need me.",
-    "shuting down boss"
+    "Shutting down boss."
 ]
 
 ERROR_LINES = [
-    "Boss. something went wrong on my side.",
+    "Boss. Something went wrong on my side.",
     "I hit an error. Give me another shot.",
     "Something broke in the system.",
     "That didn't go according to plan."
@@ -143,8 +135,11 @@ ERROR_LINES = [
 # =====================================================
 
 LAB_INTRO = (
-    "Welcome to Phoenix Lab , where ideas ignite and become reality. Let's build something worth remembering "
-    "Phoenix lab is an ecosystem to deploy , monitor and upgrade your digital products and i'm here to help you with that so you don't need to worry about manual headaches."
+    "Welcome to Phoenix Lab, where ideas ignite and become reality. "
+    "Let's build something worth remembering. "
+    "Phoenix Lab is an ecosystem to deploy, monitor and upgrade "
+    "your digital products, and I'm here to help you with that "
+    "so you don't need to worry about manual headaches."
 )
 
 
@@ -176,11 +171,9 @@ WEB_COMMANDS = {
 # GUI HELPERS
 # =====================================================
 
-def ui_conversation(*text):
+def ui_conversation(text):
     try:
-        set_conversation(
-            text
-        )
+        set_conversation(text)
     except Exception as e:
         print(
             "[Phoenix] UI conversation error:",
@@ -206,9 +199,7 @@ def normalize_text(text):
     if not text:
         return ""
 
-    text = str(
-        text
-    ).lower().strip()
+    text = str(text).lower().strip()
 
     text = text.replace(
         "-",
@@ -410,6 +401,7 @@ def get_project_intro(
 
     """
     Read the project's local knowledge file.
+
     Phoenix uses the local knowledge system first.
     No AI request is made for this.
     """
@@ -428,7 +420,7 @@ def get_project_intro(
             path
         )
 
-        # Fallback only if the registry contains one.
+        # Fallback only if registry contains one.
         project = PROJECTS.get(
             project_id
         )
@@ -454,6 +446,7 @@ def get_project_intro(
             return None
 
         lines = content.splitlines()
+
         paragraph = []
 
         for raw_line in lines:
@@ -505,8 +498,7 @@ def get_project_intro(
     except Exception as e:
 
         print(
-            "[Phoenix Knowledge] "
-            "Read error:",
+            "[Phoenix Knowledge] Read error:",
             e
         )
 
@@ -671,6 +663,7 @@ def prepare_lab_action():
 
     return {
         "reply": LAB_INTRO,
+
         "action": lambda:
             webbrowser.open(
                 PHOENIX_LAB_URL
@@ -725,6 +718,7 @@ def prepare_project_action(
 
     return {
         "reply": intro,
+
         "action": lambda:
             webbrowser.open(
                 url
@@ -763,6 +757,7 @@ def handle_project_command(command):
     ]
 
     if normalized in lab_commands:
+
         return prepare_lab_action()
 
     # =================================================
@@ -903,6 +898,7 @@ def handle_music(command):
 
         return {
             "reply": f"Playing {song}.",
+
             "action": lambda:
                 webbrowser.open(
                     link
@@ -1077,6 +1073,12 @@ def processCommand(command):
 # =====================================================
 # TTS ENGINE
 # =====================================================
+# =====================================================
+# TTS ENGINE
+# =====================================================
+
+TTS_CHUNK_SIZE = 900
+
 
 def generate_tts_audio(text):
 
@@ -1092,139 +1094,327 @@ def generate_tts_audio(text):
         async for chunk in communicator.stream():
 
             if chunk["type"] == "audio":
-
                 audio_data.extend(
                     chunk["data"]
                 )
 
-        return bytes(
-            audio_data
-        )
+        return bytes(audio_data)
 
     return asyncio.run(
         generate()
     )
 
 
-def cache_tts(text):
+def clean_tts_text(text):
+
+    """
+    Convert AI / Markdown responses
+    into natural speech.
+
+    IMPORTANT:
+    This only changes what Phoenix speaks.
+    The original AI response remains untouched
+    in the UI.
+    """
 
     if not text:
-        return
+        return ""
 
-    text = str(
+    text = str(text).strip()
+
+    # Remove fenced code blocks completely.
+    text = re.sub(
+        r"```.*?```",
+        "",
+        text,
+        flags=re.DOTALL
+    )
+
+    # Remove markdown bold.
+    text = re.sub(
+        r"\*\*(.*?)\*\*",
+        r"\1",
+        text,
+        flags=re.DOTALL
+    )
+
+    # Remove markdown italic.
+    text = re.sub(
+        r"\*(.*?)\*",
+        r"\1",
+        text,
+        flags=re.DOTALL
+    )
+
+    # Remove markdown underline/bold.
+    text = re.sub(
+        r"__(.*?)__",
+        r"\1",
+        text,
+        flags=re.DOTALL
+    )
+
+    text = re.sub(
+        r"_(.*?)_",
+        r"\1",
+        text,
+        flags=re.DOTALL
+    )
+
+    # Remove markdown headings.
+    text = re.sub(
+        r"^\s*#+\s*",
+        "",
+        text,
+        flags=re.MULTILINE
+    )
+
+    # Remove markdown bullets.
+    text = re.sub(
+        r"^\s*[-*+]\s+",
+        "",
+        text,
+        flags=re.MULTILINE
+    )
+
+    # Remove numbered list formatting.
+    text = re.sub(
+        r"^\s*\d+\.\s+",
+        "",
+        text,
+        flags=re.MULTILINE
+    )
+
+    # Remove inline code markers.
+    text = text.replace(
+        "`",
+        ""
+    )
+
+    # Remove URLs.
+    text = re.sub(
+        r"https?://\S+",
+        "",
         text
-    ).strip()
+    )
+
+    # Replace excessive whitespace/newlines.
+    text = re.sub(
+        r"\s+",
+        " ",
+        text
+    )
+
+    return text.strip()
+
+
+def split_tts_text(
+    text,
+    max_chars=TTS_CHUNK_SIZE
+):
+
+    """
+    Split long responses into larger,
+    natural speech chunks.
+
+    900 characters is intentional.
+
+    The previous 260-character limit caused
+    too many separate Edge-TTS requests.
+    """
+
+    text = clean_tts_text(
+        text
+    )
 
     if not text:
-        return
+        return []
 
-    with TTS_CACHE_LOCK:
+    if len(text) <= max_chars:
+        return [text]
 
-        if text in TTS_CACHE:
-            return
+    sentences = re.split(
+        r"(?<=[.!?])\s+",
+        text
+    )
+
+    chunks = []
+    current = ""
+
+    for sentence in sentences:
+
+        sentence = sentence.strip()
+
+        if not sentence:
+            continue
+
+        # -------------------------------------------------
+        # Sentence fits into current chunk
+        # -------------------------------------------------
+
+        if (
+            len(current)
+            + len(sentence)
+            + 1
+            <= max_chars
+        ):
+
+            if current:
+                current += " "
+
+            current += sentence
+
+            continue
+
+        # -------------------------------------------------
+        # Save current chunk
+        # -------------------------------------------------
+
+        if current:
+
+            chunks.append(
+                current.strip()
+            )
+
+        # -------------------------------------------------
+        # Sentence itself is too large
+        # -------------------------------------------------
+
+        if len(sentence) > max_chars:
+
+            parts = re.split(
+                r"(?<=[,;:])\s+",
+                sentence
+            )
+
+            sub_current = ""
+
+            for part in parts:
+
+                part = part.strip()
+
+                if not part:
+                    continue
+
+                if (
+                    len(sub_current)
+                    + len(part)
+                    + 1
+                    <= max_chars
+                ):
+
+                    if sub_current:
+                        sub_current += " "
+
+                    sub_current += part
+
+                else:
+
+                    if sub_current:
+
+                        chunks.append(
+                            sub_current.strip()
+                        )
+
+                    # -------------------------------------------------
+                    # Hard split only when absolutely necessary
+                    # -------------------------------------------------
+
+                    while len(part) > max_chars:
+
+                        cut = part.rfind(
+                            " ",
+                            0,
+                            max_chars
+                        )
+
+                        if cut <= 0:
+                            cut = max_chars
+
+                        chunks.append(
+                            part[:cut].strip()
+                        )
+
+                        part = part[
+                            cut:
+                        ].strip()
+
+                    sub_current = part
+
+            if sub_current:
+                current = sub_current
+            else:
+                current = ""
+
+        else:
+
+            current = sentence
+
+    if current:
+        chunks.append(
+            current.strip()
+        )
+
+    return [
+        chunk
+        for chunk in chunks
+        if chunk
+    ]
+
+
+def play_tts_audio(audio_data):
+
+    if not audio_data:
+        return False
 
     try:
 
-        audio_data = generate_tts_audio(
-            text
+        # Stop previous playback if necessary.
+        if pygame.mixer.music.get_busy():
+
+            pygame.mixer.music.stop()
+
+        # Release previous audio stream.
+        try:
+            pygame.mixer.music.unload()
+        except Exception:
+            pass
+
+        audio_stream = io.BytesIO(
+            audio_data
         )
 
-        if audio_data:
+        audio_stream.seek(
+            0
+        )
 
-            with TTS_CACHE_LOCK:
+        pygame.mixer.music.load(
+            audio_stream,
+            "mp3"
+        )
 
-                TTS_CACHE[text] = audio_data
+        pygame.mixer.music.play()
 
-            print(
-                "[Phoenix] Cached voice:",
-                text
+        while pygame.mixer.music.get_busy():
+
+            if assistant_stop_event.is_set():
+                pygame.mixer.music.stop()
+                break
+
+            pygame.time.Clock().tick(
+                30
             )
+
+        return True
 
     except Exception as e:
 
         print(
-            "[Phoenix] TTS cache error:",
-            e
+            "[Phoenix] Audio playback error:",
+            repr(e)
         )
 
-
-def preload_tts():
-
-    lines = []
-
-    lines.extend(
-        STARTUP_LINES
-    )
-
-    lines.extend(
-        WAKE_LINES
-    )
-
-    lines.extend(
-        THINKING_LINES
-    )
-
-    lines.extend(
-        GOODBYE_LINES
-    )
-
-    lines.extend(
-        ERROR_LINES
-    )
-
-    lines.append(
-        LAB_INTRO
-    )
-
-    # ---------------------------------------------
-    # Project intros from knowledge files
-    # ---------------------------------------------
-
-    for project_id in PROJECTS:
-
-        intro = get_project_intro(
-            project_id
-        )
-
-        if intro:
-
-            lines.append(
-                intro
-            )
-
-    # ---------------------------------------------
-    # Remove duplicates
-    # ---------------------------------------------
-
-    lines = list(
-        dict.fromkeys(
-            lines
-        )
-    )
-
-    # ---------------------------------------------
-    # Cache
-    # ---------------------------------------------
-
-    for line in lines:
-
-        if assistant_stop_event.is_set():
-            break
-
-        cache_tts(
-            line
-        )
-
-
-def start_tts_preloader():
-
-    thread = threading.Thread(
-        target=preload_tts,
-        name="PhoenixTTSPreloader",
-        daemon=True
-    )
-
-    thread.start()
+        return False
 
 
 def speak(text):
@@ -1239,63 +1429,363 @@ def speak(text):
     if not text:
         return
 
+    chunks = split_tts_text(
+        text
+    )
+
+    if not chunks:
+        return
+
     try:
         speaking()
     except Exception:
         pass
 
-    audio_data = None
+    try:
 
-    # ---------------------------------------------
-    # Check cache
-    # ---------------------------------------------
+        total = len(chunks)
 
-    with TTS_CACHE_LOCK:
-
-        audio_data = TTS_CACHE.get(
-            text
+        print(
+            f"[Phoenix] Speaking {total} TTS chunk(s)"
         )
 
-    # ---------------------------------------------
-    # Generate if not cached
-    # ---------------------------------------------
+        for index, chunk in enumerate(
+            chunks,
+            start=1
+        ):
 
-    if audio_data is None:
-
-        try:
-
-            audio_data = generate_tts_audio(
-                text
-            )
-
-        except Exception as e:
+            if assistant_stop_event.is_set():
+                break
 
             print(
-                "[Phoenix] TTS generation error:",
-                e
+                f"[Phoenix] TTS chunk "
+                f"{index}/{total} "
+                f"({len(chunk)} chars)"
             )
 
+            # -------------------------------------------------
+            # Generate one reasonably large chunk.
+            # This drastically reduces Edge-TTS requests.
+            # -------------------------------------------------
+
             try:
-                idle()
-            except Exception:
-                pass
 
-            return
+                audio_data = generate_tts_audio(
+                    chunk
+                )
 
-    if not audio_data:
+            except Exception as e:
+
+                print(
+                    "[Phoenix] TTS generation error:",
+                    repr(e)
+                )
+
+                continue
+
+            if not audio_data:
+
+                print(
+                    "[Phoenix] Empty TTS audio."
+                )
+
+                continue
+
+            # -------------------------------------------------
+            # Play entire chunk before generating next one.
+            # -------------------------------------------------
+
+            success = play_tts_audio(
+                audio_data
+            )
+
+            if not success:
+
+                print(
+                    f"[Phoenix] Failed to play "
+                    f"TTS chunk {index}/{total}"
+                )
+
+    finally:
 
         try:
             idle()
         except Exception:
             pass
 
+
+def speak_random(lines):
+
+    if not lines:
         return
 
-    # ---------------------------------------------
-    # Playback
-    # ---------------------------------------------
+    line = random.choice(
+        lines
+    )
+
+    speak(
+        line
+    )
+
+def clean_tts_text(text):
+
+    """
+    Convert AI / Markdown responses
+    into natural speech.
+    """
+
+    if not text:
+        return ""
+
+    text = str(
+        text
+    ).strip()
+
+    # Remove markdown bold
+    text = re.sub(
+        r"\*\*(.*?)\*\*",
+        r"\1",
+        text
+    )
+
+    # Remove markdown italic
+    text = re.sub(
+        r"\*(.*?)\*",
+        r"\1",
+        text
+    )
+
+    # Remove markdown underline/bold
+    text = re.sub(
+        r"__(.*?)__",
+        r"\1",
+        text
+    )
+
+    text = re.sub(
+        r"_(.*?)_",
+        r"\1",
+        text
+    )
+
+    # Remove markdown headings
+    text = re.sub(
+        r"^\s*#+\s*",
+        "",
+        text,
+        flags=re.MULTILINE
+    )
+
+    # Remove markdown bullets
+    text = re.sub(
+        r"^\s*[-*+]\s+",
+        "",
+        text,
+        flags=re.MULTILINE
+    )
+
+    # Remove numbered list formatting
+    text = re.sub(
+        r"^\s*\d+\.\s+",
+        "",
+        text,
+        flags=re.MULTILINE
+    )
+
+    # Remove code blocks
+    text = re.sub(
+        r"```.*?```",
+        "",
+        text,
+        flags=re.DOTALL
+    )
+
+    # Remove inline code markers
+    text = text.replace(
+        "`",
+        ""
+    )
+
+    # Remove URLs
+    text = re.sub(
+        r"https?://\S+",
+        "",
+        text
+    )
+
+    # Convert line breaks into spaces
+    text = re.sub(
+        r"\s+",
+        " ",
+        text
+    )
+
+    return text.strip()
+
+
+def split_tts_text(
+    text,
+    max_chars=260
+):
+
+    """
+    Split long responses into safe speech chunks.
+
+    Preference:
+
+    1. Sentences
+    2. Commas
+    3. Word boundaries
+    """
+
+    text = clean_tts_text(
+        text
+    )
+
+    if not text:
+        return []
+
+    if len(text) <= max_chars:
+        return [text]
+
+    sentences = re.split(
+        r"(?<=[.!?])\s+",
+        text
+    )
+
+    chunks = []
+    current = ""
+
+    for sentence in sentences:
+
+        sentence = sentence.strip()
+
+        if not sentence:
+            continue
+
+        # Normal sentence fits
+        if (
+            len(current)
+            + len(sentence)
+            + 1
+            <= max_chars
+        ):
+
+            if current:
+                current += " "
+
+            current += sentence
+
+            continue
+
+        # Save current chunk
+        if current:
+
+            chunks.append(
+                current.strip()
+            )
+
+        # Sentence itself is too large
+        if len(sentence) > max_chars:
+
+            parts = re.split(
+                r"(?<=[,;:])\s+",
+                sentence
+            )
+
+            sub_current = ""
+
+            for part in parts:
+
+                part = part.strip()
+
+                if not part:
+                    continue
+
+                if (
+                    len(sub_current)
+                    + len(part)
+                    + 1
+                    <= max_chars
+                ):
+
+                    if sub_current:
+                        sub_current += " "
+
+                    sub_current += part
+
+                else:
+
+                    if sub_current:
+
+                        chunks.append(
+                            sub_current.strip()
+                        )
+
+                    # Still too long:
+                    # hard split at word boundary
+                    while len(part) > max_chars:
+
+                        cut = part.rfind(
+                            " ",
+                            0,
+                            max_chars
+                        )
+
+                        if cut <= 0:
+                            cut = max_chars
+
+                        chunks.append(
+                            part[:cut].strip()
+                        )
+
+                        part = part[
+                            cut:
+                        ].strip()
+
+                    sub_current = part
+
+            if sub_current:
+                current = sub_current
+            else:
+                current = ""
+
+        else:
+
+            current = sentence
+
+    if current:
+
+        chunks.append(
+            current.strip()
+        )
+
+    return [
+        chunk
+        for chunk in chunks
+        if chunk
+    ]
+
+
+def play_tts_audio(
+    audio_data
+):
+
+    if not audio_data:
+        return False
 
     try:
+
+        # Stop previous playback
+        if pygame.mixer.music.get_busy():
+
+            pygame.mixer.music.stop()
+
+        # Release previous stream
+        try:
+            pygame.mixer.music.unload()
+        except Exception:
+            pass
 
         audio_stream = io.BytesIO(
             audio_data
@@ -1318,12 +1808,78 @@ def speak(text):
                 30
             )
 
+        return True
+
     except Exception as e:
 
         print(
             "[Phoenix] Audio playback error:",
             e
         )
+
+        return False
+
+
+def speak(text):
+
+    if not text:
+        return
+
+    text = str(
+        text
+    ).strip()
+
+    if not text:
+        return
+
+    chunks = split_tts_text(
+        text
+    )
+
+    if not chunks:
+        return
+
+    try:
+        speaking()
+    except Exception:
+        pass
+
+    try:
+
+        for index, chunk in enumerate(
+            chunks
+        ):
+
+            if assistant_stop_event.is_set():
+                break
+
+            print(
+                f"[Phoenix] TTS chunk "
+                f"{index + 1}/{len(chunks)}"
+            )
+
+            try:
+
+                audio_data = generate_tts_audio(
+                    chunk
+                )
+
+            except Exception as e:
+
+                print(
+                    "[Phoenix] TTS generation error:",
+                    e
+                )
+
+                continue
+
+            if not audio_data:
+                continue
+
+            # Play this chunk completely
+            play_tts_audio(
+                audio_data
+            )
 
     finally:
 
@@ -1525,6 +2081,7 @@ def contains_wake_word(text):
         if lower.startswith(
             wake_word + " "
         ):
+
             return True
 
     for partial in PARTIAL_WAKE_WORDS:
@@ -1535,6 +2092,7 @@ def contains_wake_word(text):
         if lower.startswith(
             partial + " "
         ):
+
             return True
 
     return False
@@ -1546,6 +2104,7 @@ def remove_wake_word(text):
         return ""
 
     cleaned = text.strip()
+
     lower = cleaned.lower()
 
     all_wake_words = (
@@ -1561,6 +2120,7 @@ def remove_wake_word(text):
     ):
 
         if lower == wake_word:
+
             return ""
 
         if lower.startswith(
@@ -1809,12 +2369,6 @@ def assistant():
     initialize_audio()
 
     # ---------------------------------------------
-    # Preload common TTS in background
-    # ---------------------------------------------
-
-    start_tts_preloader()
-
-    # ---------------------------------------------
     # Startup
     # ---------------------------------------------
 
@@ -1827,6 +2381,7 @@ def assistant():
     # ---------------------------------------------
 
     active = False
+
     pending_command = None
 
     ui_idle()
@@ -1891,6 +2446,7 @@ def assistant():
             if pending_command:
 
                 command = pending_command
+
                 pending_command = None
 
             else:
@@ -1975,6 +2531,7 @@ def assistant():
                 )
 
                 active = False
+
                 pending_command = None
 
                 ui_idle()

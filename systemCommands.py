@@ -39,7 +39,7 @@ def open_youtube():
 def open_github():
 
     webbrowser.open(
-        "https://github.com"
+        "https://github.com/abhishekpundhir"
     )
 
     return "GitHub is open."
@@ -57,7 +57,7 @@ def open_chatgpt():
 def open_instagram():
 
     webbrowser.open(
-        "https://www.instagram.com"
+        "https://www.instagram.com/iashlyee"
     )
 
     return "Instagram is open."
@@ -75,7 +75,7 @@ def open_facebook():
 def open_linkedin():
 
     webbrowser.open(
-        "https://www.linkedin.com"
+        "https://www.linkedin.com/in/abhishek-pundhir-53ab162aa/?isSelfProfile=true"
     )
 
     return "LinkedIn is open."
@@ -84,7 +84,7 @@ def open_linkedin():
 def open_x():
 
     webbrowser.open(
-        "https://x.com"
+        "https://x.com/Its_ashlye"
     )
 
     return "X is open."
@@ -129,7 +129,7 @@ def open_amazon():
 def open_gmail():
 
     webbrowser.open(
-        "https://mail.google.com"
+        "https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox"
     )
 
     return "Gmail is open."
