@@ -15,6 +15,7 @@ import re
 
 from dotenv import load_dotenv
 from client import askPhoenix
+
 import systemCommands as system
 
 from phoenixLabProjects import (
@@ -77,7 +78,6 @@ PROJECT_KNOWLEDGE_DIR = os.path.join(
 # =====================================================
 
 assistant_stop_event = threading.Event()
-
 assistant_thread = None
 
 
@@ -86,7 +86,6 @@ assistant_thread = None
 # =====================================================
 
 TTS_CACHE = {}
-
 TTS_CACHE_LOCK = threading.Lock()
 
 
@@ -95,45 +94,44 @@ TTS_CACHE_LOCK = threading.Lock()
 # =====================================================
 
 STARTUP_LINES = [
-    "Phoenix online. Systems are green.",
-    "Phoenix online. Ready when you are, Boss.",
-    "Systems online. Let's get to work.",
-    "Phoenix is awake. What's the mission?",
-    "Back online, Boss."
+    "Phoenix online. Good to go boss",
+    "Boss phoenix at your service",
+    "Systems online. Let's get to work",
+    "I'm Up boss whats the task",
+    "Phoenix is online"
+    "Checking on you boss is all good"
 ]
-
 
 WAKE_LINES = [
-    "I'm here, Boss.",
-    "Online and listening.",
-    "At your service, Boss.",
-    "I'm listening.",
-    "Ready. What's the move?",
-    "Go ahead, Boss."
+    "I'm here Boss",
+    "Welcome back Ashlye",
+    "At your service Boss",
+    "Hey there any tea",
+    "Hey Boss is that a 3AM Overthink. or a new project idea",
+    "I'm missed  you boss ",
+    "Congratulations for your last progress boss. that was a smooth win ",
+    "Hey welcome back boss. i'm just thinking about you"
 ]
-
 
 THINKING_LINES = [
-    "Give me a second.",
-    "Working on it.",
-    "One moment, Boss.",
-    "Let me handle that.",
-    "Processing.",
-    "On it."
+    "Give me a second  ",
+    "Working on it boss",
+    "One moment baby",
+    "Let me handle that",
+    "Hold your coffee boss. i'll handle this",
+    "On it"
 ]
-
 
 GOODBYE_LINES = [
-    "Standing down, Boss.",
-    "Going quiet. Call me when you need me.",
-    "Entering standby.",
+    "Good night boss.  i'm here whenver you need me",
+    "get some sleep boss i'll handle the rest work",
+    "dude gotta go and you don't overthink. i'll be here by your side allways",
     "I'll be here when you need me.",
-    "Phoenix standing down."
+    "shuting down boss"
 ]
 
-
 ERROR_LINES = [
-    "Boss, something went wrong on my side.",
+    "Boss. something went wrong on my side.",
     "I hit an error. Give me another shot.",
     "Something broke in the system.",
     "That didn't go according to plan."
@@ -145,8 +143,8 @@ ERROR_LINES = [
 # =====================================================
 
 LAB_INTRO = (
-    "Phoenix Lab is your developer ecosystem "
-    "for building, managing, and exploring your projects."
+    "Welcome to Phoenix Lab , where ideas ignite and become reality. Let's build something worth remembering "
+    "Phoenix lab is an ecosystem to deploy , monitor and upgrade your digital products and i'm here to help you with that so you don't need to worry about manual headaches."
 )
 
 
@@ -157,18 +155,15 @@ LAB_INTRO = (
 WEB_COMMANDS = {
     "phoenix lab": system.open_phoenix_lab,
     "phoenixlab": system.open_phoenix_lab,
-
     "google": system.open_google,
     "youtube": system.open_youtube,
     "github": system.open_github,
     "chatgpt": system.open_chatgpt,
-
     "instagram": system.open_instagram,
     "facebook": system.open_facebook,
     "linkedin": system.open_linkedin,
     "twitter": system.open_x,
     "x": system.open_x,
-
     "reddit": system.open_reddit,
     "spotify": system.open_spotify,
     "netflix": system.open_netflix,
@@ -181,16 +176,12 @@ WEB_COMMANDS = {
 # GUI HELPERS
 # =====================================================
 
-def ui_conversation(text):
-
+def ui_conversation(*text):
     try:
-
         set_conversation(
             text
         )
-
     except Exception as e:
-
         print(
             "[Phoenix] UI conversation error:",
             e
@@ -198,13 +189,9 @@ def ui_conversation(text):
 
 
 def ui_idle():
-
     try:
-
         idle()
-
     except Exception as e:
-
         print(
             "[Phoenix] UI idle error:",
             e
@@ -216,9 +203,7 @@ def ui_idle():
 # =====================================================
 
 def normalize_text(text):
-
     if not text:
-
         return ""
 
     text = str(
@@ -341,7 +326,6 @@ def build_project_aliases():
             )
 
             if normalized:
-
                 aliases[
                     normalized
                 ] = project_id
@@ -354,7 +338,6 @@ def build_project_aliases():
         )
 
         if name:
-
             aliases[
                 name
             ] = project_id
@@ -374,7 +357,6 @@ def get_project_knowledge_path(
 ):
 
     if not project_id:
-
         return None
 
     filename = (
@@ -390,7 +372,6 @@ def get_project_knowledge_path(
 def clean_knowledge_line(line):
 
     if not line:
-
         return ""
 
     line = line.strip()
@@ -429,7 +410,6 @@ def get_project_intro(
 
     """
     Read the project's local knowledge file.
-
     Phoenix uses the local knowledge system first.
     No AI request is made for this.
     """
@@ -439,7 +419,6 @@ def get_project_intro(
     )
 
     if not path:
-
         return None
 
     if not os.path.exists(path):
@@ -455,7 +434,6 @@ def get_project_intro(
         )
 
         if project:
-
             return project.get(
                 "intro"
             )
@@ -473,11 +451,9 @@ def get_project_intro(
             content = file.read()
 
         if not content.strip():
-
             return None
 
         lines = content.splitlines()
-
         paragraph = []
 
         for raw_line in lines:
@@ -488,19 +464,16 @@ def get_project_intro(
             if not line:
 
                 if paragraph:
-
                     break
 
                 continue
 
             # Ignore markdown headings
             if line.startswith("#"):
-
                 continue
 
             # Ignore markdown separators
             if line.startswith("---"):
-
                 continue
 
             cleaned = clean_knowledge_line(
@@ -508,7 +481,6 @@ def get_project_intro(
             )
 
             if cleaned:
-
                 paragraph.append(
                     cleaned
                 )
@@ -526,7 +498,6 @@ def get_project_intro(
             )
 
             if sentences:
-
                 return sentences[0].strip()
 
             return intro
@@ -548,7 +519,6 @@ def get_project_intro(
     )
 
     if project:
-
         return project.get(
             "intro"
         )
@@ -563,7 +533,6 @@ def get_project_intro(
 def find_project(target):
 
     if not target:
-
         return None
 
     target = normalize_text(
@@ -702,7 +671,6 @@ def prepare_lab_action():
 
     return {
         "reply": LAB_INTRO,
-
         "action": lambda:
             webbrowser.open(
                 PHOENIX_LAB_URL
@@ -720,7 +688,6 @@ def prepare_project_action(
 ):
 
     if not project:
-
         return None
 
     name = project.get(
@@ -758,7 +725,6 @@ def prepare_project_action(
 
     return {
         "reply": intro,
-
         "action": lambda:
             webbrowser.open(
                 url
@@ -773,7 +739,6 @@ def prepare_project_action(
 def handle_project_command(command):
 
     if not command:
-
         return None
 
     normalized = normalize_text(
@@ -788,20 +753,16 @@ def handle_project_command(command):
         "open lab",
         "launch lab",
         "go to lab",
-
         "open phoenix lab",
         "launch phoenix lab",
         "go to phoenix lab",
-
         "open phoenixlab",
         "launch phoenixlab",
-
         "phoenix lab",
         "phoenixlab"
     ]
 
     if normalized in lab_commands:
-
         return prepare_lab_action()
 
     # =================================================
@@ -822,7 +783,6 @@ def handle_project_command(command):
     )
 
     if not is_open_command:
-
         return None
 
     target = get_open_target(
@@ -922,7 +882,6 @@ def handle_music(command):
     if not lower.startswith(
         "play "
     ):
-
         return None
 
     song = command[5:].strip()
@@ -944,7 +903,6 @@ def handle_music(command):
 
         return {
             "reply": f"Playing {song}.",
-
             "action": lambda:
                 webbrowser.open(
                     link
@@ -976,14 +934,12 @@ def get_news():
 
         response = session.get(
             "https://newsdata.io/api/1/latest",
-
             params={
                 "apikey": NEWSDATA_API_KEY,
                 "language": "en",
                 "country": "in",
                 "size": 3
             },
-
             timeout=5
         )
 
@@ -1052,7 +1008,6 @@ def get_news():
 def processCommand(command):
 
     if not command:
-
         return None
 
     command = command.strip()
@@ -1071,7 +1026,6 @@ def processCommand(command):
     )
 
     if project_result:
-
         return project_result
 
     # =================================================
@@ -1083,7 +1037,6 @@ def processCommand(command):
     )
 
     if website_result:
-
         return website_result
 
     # =================================================
@@ -1095,7 +1048,6 @@ def processCommand(command):
     )
 
     if music_result:
-
         return music_result
 
     # =================================================
@@ -1120,49 +1072,6 @@ def processCommand(command):
         }
 
     return None
-
-
-# =====================================================
-# LOGGING
-# =====================================================
-
-def log_conversation(
-    user_text,
-    phoenix_text
-):
-
-    try:
-
-        log_path = os.path.join(
-            BASE_DIR,
-            "logs.txt"
-        )
-
-        with open(
-            log_path,
-            "a",
-            encoding="utf-8"
-        ) as log:
-
-            log.write(
-                f"User: {user_text}\n"
-            )
-
-            log.write(
-                f"Phoenix: {phoenix_text}\n"
-            )
-
-            log.write(
-                "-" * 60
-                + "\n"
-            )
-
-    except Exception as e:
-
-        print(
-            "[Phoenix] Logging error:",
-            e
-        )
 
 
 # =====================================================
@@ -1200,7 +1109,6 @@ def generate_tts_audio(text):
 def cache_tts(text):
 
     if not text:
-
         return
 
     text = str(
@@ -1208,13 +1116,11 @@ def cache_tts(text):
     ).strip()
 
     if not text:
-
         return
 
     with TTS_CACHE_LOCK:
 
         if text in TTS_CACHE:
-
             return
 
     try:
@@ -1303,7 +1209,6 @@ def preload_tts():
     for line in lines:
 
         if assistant_stop_event.is_set():
-
             break
 
         cache_tts(
@@ -1325,7 +1230,6 @@ def start_tts_preloader():
 def speak(text):
 
     if not text:
-
         return
 
     text = str(
@@ -1333,15 +1237,11 @@ def speak(text):
     ).strip()
 
     if not text:
-
         return
 
     try:
-
         speaking()
-
     except Exception:
-
         pass
 
     audio_data = None
@@ -1436,7 +1336,6 @@ def speak(text):
 def speak_random(lines):
 
     if not lines:
-
         return
 
     line = random.choice(
@@ -1457,7 +1356,6 @@ def initialize_audio():
     try:
 
         if pygame.mixer.get_init():
-
             return
 
         pygame.mixer.init(
@@ -1488,7 +1386,6 @@ def deliver_command_result(
 ):
 
     if not result:
-
         return
 
     reply = result.get(
@@ -1551,11 +1448,8 @@ def handle_ai(command):
 
     # Don't let GUI state crash AI.
     try:
-
         thinking()
-
     except Exception:
-
         pass
 
     speak(
@@ -1593,11 +1487,6 @@ def handle_ai(command):
         f"[Phoenix] Response: {reply}"
     )
 
-    log_conversation(
-        command,
-        reply
-    )
-
     speak(
         reply
     )
@@ -1614,7 +1503,6 @@ WAKE_WORDS = [
     "ok phoenix"
 ]
 
-
 PARTIAL_WAKE_WORDS = [
     "phoen",
     "phoe",
@@ -1625,7 +1513,6 @@ PARTIAL_WAKE_WORDS = [
 def contains_wake_word(text):
 
     if not text:
-
         return False
 
     lower = text.lower().strip()
@@ -1633,25 +1520,21 @@ def contains_wake_word(text):
     for wake_word in WAKE_WORDS:
 
         if lower == wake_word:
-
             return True
 
         if lower.startswith(
             wake_word + " "
         ):
-
             return True
 
     for partial in PARTIAL_WAKE_WORDS:
 
         if lower == partial:
-
             return True
 
         if lower.startswith(
             partial + " "
         ):
-
             return True
 
     return False
@@ -1660,11 +1543,9 @@ def contains_wake_word(text):
 def remove_wake_word(text):
 
     if not text:
-
         return ""
 
     cleaned = text.strip()
-
     lower = cleaned.lower()
 
     all_wake_words = (
@@ -1680,7 +1561,6 @@ def remove_wake_word(text):
     ):
 
         if lower == wake_word:
-
             return ""
 
         if lower.startswith(
@@ -1701,7 +1581,6 @@ def remove_wake_word(text):
 def is_sleep_command(text):
 
     if not text:
-
         return False
 
     command = normalize_text(
@@ -1741,7 +1620,6 @@ def is_sleep_command(text):
 def is_shutdown_command(text):
 
     if not text:
-
         return False
 
     command = normalize_text(
@@ -1801,7 +1679,6 @@ def listen(
         ui_idle()
 
         if not text:
-
             return None
 
         text = text.strip()
@@ -1950,7 +1827,6 @@ def assistant():
     # ---------------------------------------------
 
     active = False
-
     pending_command = None
 
     ui_idle()
@@ -1985,13 +1861,11 @@ def assistant():
                 )
 
                 if not text:
-
                     continue
 
                 if not contains_wake_word(
                     text
                 ):
-
                     continue
 
                 print(
@@ -2017,7 +1891,6 @@ def assistant():
             if pending_command:
 
                 command = pending_command
-
                 pending_command = None
 
             else:
@@ -2032,13 +1905,11 @@ def assistant():
                 )
 
                 if not text:
-
                     continue
 
                 command = text.strip()
 
             if not command:
-
                 continue
 
             print(
@@ -2104,7 +1975,6 @@ def assistant():
                 )
 
                 active = False
-
                 pending_command = None
 
                 ui_idle()

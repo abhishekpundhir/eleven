@@ -27,12 +27,13 @@ PROJECTS = {
         ),
 
         "intro": (
-            "VibeSpace is a system for educational events, "
+            "VibeSpace is a system for educational event hosting "
             "hackathons, and project submissions."
         ),
 
         "aliases": [
             "vibespace",
+            "white space",
             "vibe space",
             "vibe",
             "project 1"
@@ -67,7 +68,7 @@ PROJECTS = {
         "intro": (
             "Ketchup AI is a global nexus connecting "
             "academia and industry through knowledge, "
-            "culture, research, and exceptional talent."
+            "culture, research, and exceptional talent. dedicated to galgotias university"
         ),
 
         "aliases": [
@@ -140,7 +141,7 @@ PROJECTS = {
 
         "intro": (
             "Phoenix is a real-time desktop voice assistant "
-            "built to control your PC and manage workflows."
+            "built to control your PC and manage workflows and it was the part of phoenix lab"
         ),
 
         "aliases": [
@@ -175,7 +176,7 @@ PROJECTS = {
 
         "intro": (
             "AuthorRead is an elegant digital book library "
-            "where curiosity meets clarity."
+            "where curiosity meets clarity"
         ),
 
         "aliases": [
