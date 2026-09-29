@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phoenix</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+ 
+<div class="app">
+  <div class="sparkles" id="sparkles"></div>
+ 
+  <div class="topbar">
+    <div class="brand">
+      <span class="brand-mark"><img class="ximag" style="height: 30px; width: 40px;" src="assets/app_logo.png" alt=""></span>
+      Phoenix
+    </div>
+    <div class="dev-tag">
+      <div class="dev-avatar"><a  href="https://github.com/abhishekpundhir"><img class="ximag" src="assets/code.png" alt=""></a></div>
+      <div class="dev-avatar"><a  href="http://https://www.instagram.com/iashlyee/"><img class="ximag" style="width: 24px; padding-bottom: 2px;" src="assets/heart.png" alt=""></a></div>
+      
+    </div>
+  </div>
+ 
+  <div class="stage idle-state" id="stateRoot">
+    <div class="orb-wrap idle" id="orbWrap">
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="orb" id="orb">
+        <div class="sweep"></div>
+        <div class="hotspot"></div>
+        <div class="rim"></div>
+      </div>
+    </div>
+    <div id="conversation" class="conversation"></div>
+  </div>
+<!--  
+  <div class="footer" id="footer">
+    <div class="dot"></div>
+    <span id="footerText">Idle</span>
+  </div> -->
+ 
+  <!-- <div class="hint">Tap the orb to preview states</div> -->
+</div>
+<script src="script.js"></script>
+</body>
+</html>
